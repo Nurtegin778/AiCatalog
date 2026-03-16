@@ -1,4 +1,14 @@
 export default function Home() {
+  const categories = [
+    "Генерация текста",
+    "Генерация изображений",
+    "Код",
+    "Видео",
+    "Музыка",
+    "Продуктивность",
+    "Презентация",
+    "Дизайн"
+  ];
   return (
     <main className="min-h-screen bg-[#f5f7fb]">
       <div className="mx-auto max-w-7xl px-6 py-8">
@@ -16,6 +26,16 @@ export default function Home() {
           placeholder="Поиск нейросетей..."
           className="mt-6 w-full rounded-lg border p-3 text-gray-900"
         />
+        <div className="mt-6 flex flex-wrap gap-5">
+         {categories.map((category) => (
+          <button
+           key={category}
+           className="rounded-full bg-white border px-4 py-2 text-sm hover:bg-gray-100"
+          >
+           {category}
+          </button>
+        ))}
+</div>
 
       </div>
     </main>

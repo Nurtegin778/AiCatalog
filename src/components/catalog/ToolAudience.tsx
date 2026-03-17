@@ -1,94 +1,70 @@
 import { Audience } from "@/types/tool";
-import { Users, Lightbulb, MonitorPlay, GraduationCap, Layout } from "lucide-react";
+import { 
+  Users, Lightbulb, MonitorPlay, GraduationCap, 
+  BookOpen, Video, Palette, Code, Briefcase, Sparkles, Zap 
+} from "lucide-react";
 
 type Props = {
   audience: Audience[];
 };
 
-// Маппинг иконок, если в БД приходят строки-названия
-const iconMap: Record<string, React.ReactNode> = {
-  students: <GraduationCap size={24} />,
-  creatives: <Lightbulb size={24} />,
-  marketing: <MonitorPlay size={24} />,
-  default: <Users size={24} />,
+const iconMap: Record<string, React.ElementType> = {
+  book: BookOpen,
+  bulb: Lightbulb,
+  video: Video,
+  palette: Palette,
+  code: Code,
+  briefcase: Briefcase,
+  sparkles: Sparkles,
+  students: GraduationCap,
+  marketing: MonitorPlay,
+  zap: Zap,
+  default: Users,
 };
 
 export default function ToolAudience({ audience }: Props) {
-  // Цвета для мягких градиентов под иконки (как на макете)
-  const bgStyles = [
-    { bg: "#eef2ff", color: "#6366f1" }, // Индиго
-    { bg: "#fff7ed", color: "#f97316" }, // Оранжевый
-    { bg: "#f5f3ff", color: "#8b5cf6" }, // Фиолетовый
+  if (!audience || audience.length === 0) return null;
+
+  const colorSchemes = [
+    { bg: "bg-indigo-50/50", text: "text-indigo-600", border: "group-hover:border-indigo-200", dot: "bg-indigo-400" },
+    { bg: "bg-amber-50/50", text: "text-amber-600", border: "group-hover:border-amber-200", dot: "bg-amber-400" },
+    { bg: "bg-purple-50/50", text: "text-purple-600", border: "group-hover:border-purple-200", dot: "bg-purple-400" },
+    { bg: "bg-emerald-50/50", text: "text-emerald-600", border: "group-hover:border-emerald-200", dot: "bg-emerald-400" },
   ];
 
   return (
-    <section style={{ padding: "24px 0", fontFamily: "sans-serif" }}>
-      <h2 style={{ 
-        fontSize: "20px", 
-        fontWeight: 700, 
-        color: "#111827", 
-        marginBottom: "20px" 
-      }}>
-        Кому подойдет:
-      </h2>
+    <section className="py-0 font-sans">
+      {/* Заголовок выровнен по высоте с ToolFeatures */}
+      <div className="flex items-center gap-3 mb-6 px-1">
+        <div className="w-1.5 h-6 bg-gradient-to-b from-[#3168EB] to-[#6366f1] rounded-full" />
+        <h2 className="text-[22px] font-[900] text-[#1F2937] tracking-tight">
+          Целевая аудитория
+        </h2>
+      </div>
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
-          gap: "16px",
-        }}
-      >
+      {/* Изменено на grid-cols-1 для ровного вертикального ряда в боковой панели */}
+      <div className="grid grid-cols-1 gap-4">
         {audience.map((item, index) => {
-          const style = bgStyles[index % bgStyles.length];
+          const scheme = colorSchemes[index % colorSchemes.length];
+          const IconComponent = iconMap[item.icon] || iconMap.default;
           
           return (
             <div
               key={item.title}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "16px",
-                padding: "20px",
-                background: "#ffffff",
-                border: "1px solid #f1f5f9",
-                borderRadius: "20px",
-                transition: "transform 0.2s, box-shadow 0.2s",
-              }}
+              className={`group relative flex items-center gap-5 p-5 bg-[#F9FAFB]/50 border border-gray-100 rounded-[24px] transition-all duration-500 hover:bg-white hover:shadow-[0_15px_30px_-10px_rgba(0,0,0,0.05)] ${scheme.border} hover:-translate-y-0.5`}
             >
-              {/* Контейнер для иконки */}
-              <div
-                style={{
-                  minWidth: "56px",
-                  height: "56px",
-                  borderRadius: "14px",
-                  background: style.bg,
-                  color: style.color,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                {/* Если в item.icon просто строка-эмодзи, выводим её, иначе пробуем маппинг */}
-                {item.icon.length > 2 ? (iconMap[item.icon] || iconMap.default) : <span style={{fontSize: '24px'}}>{item.icon}</span>}
+              <div className="relative shrink-0">
+                <div className={`w-12 h-12 rounded-xl ${scheme.bg} ${scheme.text} flex items-center justify-center transition-all duration-500 group-hover:scale-110 shadow-sm`}>
+                  <IconComponent size={22} strokeWidth={2.5} />
+                </div>
+                <div className={`absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full border-2 border-white ${scheme.dot}`} />
               </div>
 
-              {/* Текстовый блок */}
-              <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
-                <h3 style={{ 
-                  margin: 0, 
-                  fontSize: "16px", 
-                  fontWeight: 700, 
-                  color: "#111827" 
-                }}>
+              <div className="relative flex flex-col">
+                <h3 className="text-[16px] font-black text-[#1F2937] leading-tight tracking-tight">
                   {item.title}
                 </h3>
-                <p style={{ 
-                  margin: 0, 
-                  fontSize: "14px", 
-                  color: "#64748b", 
-                  lineHeight: "1.4" 
-                }}>
+                <p className="text-[13px] text-[#6B7280] leading-snug font-medium mt-0.5">
                   {item.description}
                 </p>
               </div>

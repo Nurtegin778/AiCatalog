@@ -7,49 +7,73 @@ import ToolProsCons from "@/components/catalog/ToolProsCons";
 import ToolFeatures from "@/components/catalog/ToolFeatures";
 import ToolTags from "@/components/catalog/ToolTags";
 import SimilarTools from "@/components/catalog/SimilarTools";
+import Header from "@/components/Header";
 
 export default function ToolPage({
   tool,
   similar,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
-    <div style={{ background: "#f8fafc", minHeight: "100vh", paddingBottom: "80px" }}>
-      <main
-        style={{
-          maxWidth: "1140px",
-          margin: "0 auto",
-          padding: "40px 20px",
-        }}
-      >
-        <div
-          style={{
-            background: "#ffffff",
-            borderRadius: "32px",
-            boxShadow: "0 4px 24px rgba(0, 0, 0, 0.04)",
-            border: "1px solid #f1f5f9",
-            overflow: "hidden",
-          }}
-        >
+    <>
+    <Header />
+    <div className="bg-[#F1F3FA] min-h-screen selection:bg-[#3168EB]/10 selection:text-[#3168EB] font-sans antialiased">
+      <div className="absolute top-0 left-0 right-0 h-[500px] bg-gradient-to-b from-[#3168EB]/5 to-transparent pointer-events-none" />
 
+      <main className="relative max-w-[1200px] mx-auto px-6 py-12 md:py-20">
+        
+        <div className="bg-white rounded-[40px] shadow-[0_20px_80px_rgba(0,0,0,0.03)] border border-white overflow-hidden">
+          
           <ToolHero tool={tool} />
 
-          <div style={{ padding: "0 40px 40px" }}>
+          <div className="px-8 md:px-16 pb-16 space-y-16">
             
-            <hr style={{ border: "0", borderTop: "1px solid #f1f5f9", marginBottom: "32px" }} />
+            <div className="h-px w-full bg-gradient-to-r from-transparent via-gray-100 to-transparent" />
 
-            <ToolFeatures features={tool.features} />
+            {/* ИСПРАВЛЕННАЯ СЕТКА: items-stretch заставляет колонки быть одной высоты */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-stretch">
+              
+              {/* Левая колонка: Основные функции */}
+              <div className="lg:col-span-7 flex flex-col">
+                <ToolFeatures features={tool.features} />
+              </div>
 
-            <ToolAudience audience={tool.audience} />
+              {/* Правая колонка: Целевая аудитория */}
+              {/* Убрали p-2 и лишний фон, чтобы выровнять по сетке макета */}
+              <div className="lg:col-span-5 flex flex-col">
+                <ToolAudience audience={tool.audience} />
+              </div>
+            </div>
 
-            <ToolProsCons pros={tool.pros} cons={tool.cons} />
+            {/* Секция плюсов и минусов */}
+            <div className="pt-8 border-t border-gray-50">
+              <ToolProsCons pros={tool.pros} cons={tool.cons} />
+            </div>
 
-            <ToolTags tags={tool.tags} />
+            {/* Теги */}
+            <div className="pt-4">
+              <ToolTags tags={tool.tags} />
+            </div>
           </div>
         </div>
         
-        <SimilarTools tools={similar} />
+        <div className="mt-24 px-4">
+          <div className="flex items-center gap-6 mb-10">
+            <h2 className="text-3xl font-extrabold text-[#1F2937] tracking-tight whitespace-nowrap">
+              Похожие нейросети
+            </h2>
+            <div className="h-[2px] w-full bg-gradient-to-r from-gray-200 to-transparent" />
+          </div>
+          <SimilarTools tools={similar as Tool[]} />
+        </div>
       </main>
+
+      <footer className="py-20 text-center">
+        <p className="text-[#9CA3AF] text-sm font-semibold tracking-widest uppercase">
+          AiCatalog • 2026
+        </p>
+      </footer>
     </div>
+    </>
   );
 }
 
@@ -75,7 +99,7 @@ export const getServerSideProps: GetServerSideProps<{
 
   const { data: similar } = await supabase
     .from("tools")
-    .select("id, name, image_url, category, slug")
+    .select("id, name, image_url, category, slug, short_description, logo_url")
     .eq("category", tool.category)
     .neq("id", tool.id)
     .limit(3);
